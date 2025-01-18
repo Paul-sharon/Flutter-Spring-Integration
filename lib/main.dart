@@ -9,6 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter & Spring Boot TODO',
       theme: ThemeData(
         primarySwatch: Colors.blue,
