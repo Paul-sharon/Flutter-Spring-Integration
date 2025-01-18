@@ -1,13 +1,11 @@
-// lib/models/task.dart
-
 class Task {
-  final int id;
+  final int? id;
   final String title;
   final String description;
   final bool completed;
 
   Task({
-    required this.id,
+    this.id,
     required this.title,
     required this.description,
     required this.completed,

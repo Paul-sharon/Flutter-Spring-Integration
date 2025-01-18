@@ -1,11 +1,9 @@
-// lib/screens/home_screen.dart
-
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 import '../models/task.dart';
-import '../widgets/task_list_item.dart';
-import '../services/task_service.dart';
 import 'add_task_screen.dart';
-import 'edit_task_screen.dart';
+import 'update_task_screen.dart';
+import 'delete_task_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,58 +11,110 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Task> tasks = [];
+  final ApiService apiService = ApiService();
+  late Future<List<Task>> tasks;
 
   @override
   void initState() {
     super.initState();
-    _fetchTasks();
+    tasks = apiService.fetchTasks();
   }
 
-  void _fetchTasks() async {
-    try {
-      List<Task> fetchedTasks = await TaskService.getTasks();
-      setState(() {
-        tasks = fetchedTasks;
-      });
-    } catch (e) {
-      // Handle the error by showing a message or logging
-      print('Error fetching tasks: $e');
-    }
-  }
-
-  void _navigateToAddTaskScreen() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => AddTaskScreen()),
-    );
-    _fetchTasks(); // Refresh the task list after adding a new task
-  }
-
-  void _navigateToEditTaskScreen(Task task) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => EditTaskScreen(task: task)),
-    );
-    _fetchTasks(); // Refresh the task list after editing a task
+  void refreshTasks() {
+    setState(() {
+      tasks = apiService.fetchTasks();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Todo App')),
-      body: tasks.isEmpty
-          ? Center(child: Text('No tasks available'))
-          : ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          return TaskListItem(
-            task: tasks[index],
-            onEdit: _navigateToEditTaskScreen,
-          );
+      appBar: AppBar(
+        title: Text('Task Manager'),
+      ),
+      body: FutureBuilder<List<Task>>(
+        future: tasks,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No tasks available.'));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                Task task = snapshot.data![index];
+                return Card(
+                  elevation: 4,
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  child: ListTile(
+                    title: Text(
+                      task.title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        decoration: task.completed
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                      ),
+                    ),
+                    subtitle: Text(task.description),
+                    trailing: Checkbox(
+                      value: task.completed,
+                      onChanged: (bool? value) {
+                        Task updatedTask = Task(
+                          id: task.id,
+                          title: task.title,
+                          description: task.description,
+                          completed: value!,
+                        );
+                        apiService.updateTask(task.id!, updatedTask).then((_) {
+                          refreshTasks();
+                        });
+                      },
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UpdateTaskScreen(
+                            task: task,
+                            onTaskUpdated: refreshTasks,
+                          ),
+                        ),
+                      );
+                    },
+                    onLongPress: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DeleteTaskScreen(
+                            taskId: task.id!,
+                            taskTitle: task.title,
+                            onTaskDeleted: refreshTasks,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            );
+          }
         },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: _navigateToAddTaskScreen,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddTaskScreen(onTaskAdded: refreshTasks),
+            ),
+          );
+        },
       ),
     );
   }
