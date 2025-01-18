@@ -17,8 +17,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   bool isCompleted = false;
 
   void saveTask() {
-    if (titleController.text.isNotEmpty &&
-        descriptionController.text.isNotEmpty) {
+    if (titleController.text.isNotEmpty && descriptionController.text.isNotEmpty) {
       ApiService()
           .addTask(Task(
         title: titleController.text,
@@ -46,9 +45,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             gradient: LinearGradient(
               colors: [
                 Color(0xff008080), // Teal green
-                Color(0xff008080), // Aqua green
+                Color(0xff00998F), // Aqua green
               ],
-
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -71,6 +69,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Title input field
               TextField(
                 controller: titleController,
                 decoration: InputDecoration(
@@ -86,6 +85,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 style: TextStyle(color: Colors.white),
               ),
               SizedBox(height: 16),
+
+              // Description input field
               TextField(
                 controller: descriptionController,
                 decoration: InputDecoration(
@@ -101,6 +102,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 style: TextStyle(color: Colors.white),
               ),
               SizedBox(height: 16),
+
+              // Completed Checkbox
               CheckboxListTile(
                 value: isCompleted,
                 onChanged: (bool? value) {
@@ -116,12 +119,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 activeColor: Colors.teal,
               ),
               SizedBox(height: 16),
+
+              // Save button
               Center(
                 child: ElevatedButton(
                   onPressed: saveTask,
                   child: Text('Save Task'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white, // Button color
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
                 ),
               ),
