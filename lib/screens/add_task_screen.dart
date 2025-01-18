@@ -45,9 +45,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color(0xff006400), // Dark green
-                Color(0xff006400), // Forest green
+                Color(0xff008080), // Teal green
+                Color(0xff008080), // Aqua green
               ],
+
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -58,8 +59,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xff006400), // Dark green
-              Color(0xff228B22), // Forest green
+              Color(0xff008080), // Teal green
+              Color(0xff00FFCC), // Aqua green
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
