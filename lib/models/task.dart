@@ -11,7 +11,7 @@ class Task {
     required this.completed,
   });
 
-  factory Task.fromJson(Map<String, dynamic> json) {
+  factory Task.fromJson(Map<String, dynamic> json) { //factory constructor from server to task object
     return Task(
       id: json['id'],
       title: json['title'],
@@ -20,7 +20,7 @@ class Task {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() { //task object to server
     return {
       'id': id,
       'title': title,

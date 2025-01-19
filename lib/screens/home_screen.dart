@@ -8,22 +8,22 @@ import 'delete_task_screen.dart';
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
-}
+  }
 
-class _HomeScreenState extends State<HomeScreen> {
+  class _HomeScreenState extends State<HomeScreen> {
   final ApiService apiService = ApiService();
   late Future<List<Task>> tasks;
 
   @override
   void initState() {
-    super.initState();
-    tasks = apiService.fetchTasks();
+  super.initState();
+  tasks = apiService.fetchTasks();
   }
 
   void refreshTasks() {
-    setState(() {
-      tasks = apiService.fetchTasks();
-    });
+  setState(() {
+  tasks = apiService.fetchTasks();
+  });
   }
 
   @override
@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     description: task.description,
                                     completed: value!,
                                   );
-                                  apiService.updateTask(task.id!, updatedTask).then((_) {
+                                  apiService.updateTask(task.id!, updatedTask).then((_) { //chaining
                                     refreshTasks();
                                   });
                                 },
